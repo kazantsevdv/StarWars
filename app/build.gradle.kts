@@ -57,6 +57,7 @@ dependencies {
     implementation(project(":navigation"))
     implementation(project(":ui-search-screen"))
     implementation(project(":ui-detail-screen"))
+    implementation(project(":ui-favorite-screen"))
 
     implementation(Libs.Core.coreKtx)
     implementation(Libs.Core.appCompat)

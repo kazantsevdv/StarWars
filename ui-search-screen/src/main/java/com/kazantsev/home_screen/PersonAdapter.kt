@@ -43,9 +43,9 @@ class PersonAdapter(
         fun bind(data: PersonInfoUi?) {
             data?.let {
                 with(binding) {
-                    root.setOnClickListener { onListItemClickListener.onItemClick(data.url) }
+                    root.setOnClickListener { onListItemClickListener.onItemClick(data.url,data.name) }
                     title.text = it.name
-                    favorite.setOnClickListener { onItemFavoriteClickListener.onItemClick(data.url) }
+                    favorite.setOnClickListener { onItemFavoriteClickListener.onItemClick(data.url,data.name) }
                     if (data.favorite) {
                         favorite.setColorFilter(Color.MAGENTA)
                     } else {
@@ -80,5 +80,5 @@ private object PersonDiffItemCallback : DiffUtil.ItemCallback<PersonInfoUi>() {
 }
 
 interface OnListItemClickListener {
-    fun onItemClick(personUrl: String)
+    fun onItemClick(personUrl: String,name:String)
 }

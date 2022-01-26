@@ -67,9 +67,9 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun favorite(url: String) {
+    fun favorite(url: String,name:String) {
         viewModelScope.launch {
-            changePersonFavoriteUseCase(url)
+            changePersonFavoriteUseCase(url,name)
         }
     }
 }

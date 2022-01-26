@@ -4,20 +4,28 @@
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/search_flow">
 
+
     <include app:graph="@navigation/search_flow" />
     <include app:graph="@navigation/detail_flow" />
+    <include app:graph="@navigation/favorite_flow" />
 
     <action
         android:id="@+id/action_search_flow"
         app:destination="@id/search_flow"
+        app:launchSingleTop="true"
         app:popUpTo="@id/main_nav_graph" />
-
+    <action
+        android:id="@+id/action_favorite_flow"
+        app:destination="@id/favorite_flow"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/search_flow" />
     <action
         android:id="@+id/action_detail_flow"
-        app:destination="@id/detail_flow">
+        app:destination="@id/detail_flow"
+        app:launchSingleTop="true">
         <argument
-            android:name="id"
-            app:argType="integer" />
+            android:name="url"
+            app:argType="string" />
     </action>
 
 </navigation>

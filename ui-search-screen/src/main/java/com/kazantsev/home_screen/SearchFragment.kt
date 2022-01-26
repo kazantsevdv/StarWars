@@ -1,7 +1,6 @@
 package com.kazantsev.home_screen
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +9,17 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import com.kazantsev.home_screen.databinding.SearchFragmentBinding
+import com.kazantsev.navigation.NavigationFlow
+import com.kazantsev.navigation.ToFlowNavigatable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -39,6 +42,7 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.person
@@ -48,23 +52,41 @@ class SearchFragment : Fragment() {
             }
         }
         binding.list.adapter = adapter
+            .withLoadStateHeaderAndFooter(
+                header = LoaderStateAdapter { adapter.retry() },
+                footer = LoaderStateAdapter { adapter.retry() }
+            )
         loadStateRefresh()
         binding.searchInput.doAfterTextChanged { text ->
             viewModel.onNewQuery(text.toString() ?: "")
+        }
+        viewModel.query
+            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+            .onEach(::updateSearchQuery)
+            .launchIn(lifecycleScope)
+
+    }
+
+    private fun updateSearchQuery(searchQuery: String) {
+        with(binding.searchInput) {
+            if ((text?.toString() ?: "") != searchQuery) {
+                setText(searchQuery)
+            }
         }
     }
 
     private val onListItemClickListener: OnListItemClickListener =
         object : OnListItemClickListener {
-            override fun onItemClick(personUrl: String) {
-
+            override fun onItemClick(personUrl: String, name: String) {
+                (requireActivity() as ToFlowNavigatable).navigateToFlow(NavigationFlow.DetailFlow(
+                    personUrl))
             }
         }
 
     private val onItemFavoriteClickListener: OnListItemClickListener =
         object : OnListItemClickListener {
-            override fun onItemClick(personUrl: String) {
-                viewModel.favorite(personUrl)
+            override fun onItemClick(personUrl: String, name: String) {
+                viewModel.favorite(personUrl, name)
             }
         }
 

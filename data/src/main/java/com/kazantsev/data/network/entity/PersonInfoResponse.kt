@@ -11,6 +11,7 @@ data class PersonInfoResponse(
     val birth_year: String,
     val gender: String,
     val url: String,
+    val films:List<String>
 ) {
     fun toPersonInfo() = PersonInfo(
         name = name,
@@ -19,5 +20,6 @@ data class PersonInfoResponse(
         birth_year = birth_year,
         gender = gender,
         url = url,
+        films=films
     )
 }

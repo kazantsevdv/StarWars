@@ -1,16 +1,17 @@
 package com.kazantsev.data.repository
 
+import android.accounts.NetworkErrorException
 import androidx.paging.PagingSource
 import com.kazantsev.data.database.AppDatabase
 import com.kazantsev.data.database.model.FavoriteEntity
 import com.kazantsev.data.network.api.ApiDataSource
 import com.kazantsev.data.util.AppCoroutineDispatchers
+import com.kazantsev.domain.entity.FavoriteItem
+import com.kazantsev.domain.entity.FilmInfo
 import com.kazantsev.domain.entity.PersonInfo
 import com.kazantsev.domain.repository.Repository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -25,17 +26,68 @@ class RepositoryImpl @Inject constructor(
         return personPagingSource.create(search)
     }
 
-    override suspend fun addPersonToFavorite(url: String) {
+    override suspend fun addPersonToFavorite(url: String, name: String) {
         withContext(dispatcher.io) {
             if (db.favoriteDao.getFavoriteByUrl(url) == null) {
-                db.favoriteDao.insertFavorite(FavoriteEntity(Url = url))
+                db.favoriteDao.insertFavorite(FavoriteEntity(Url = url, name = name))
             } else {
                 db.favoriteDao.deleteByUrl(url)
             }
         }
     }
 
-    override fun getPersonsFavoriteUseCase(): Flow<List<String>> {
-        return db.favoriteDao.getFavoriteByUrlFlow().map { it.map { it.Url } }
+    override fun getPersonsFavorite(): Flow<List<String>> {
+        return db.favoriteDao.getFavoriteFlow().map { it.map { it.Url } }
+    }
+
+    override fun getPersonFavoriteByUrl(url: String): Flow<Boolean> {
+        return db.favoriteDao.getFavoriteByUrlFlow(url).map { it != null }
+    }
+
+    override fun getFavorite(): Flow<List<FavoriteItem>> {
+        return db.favoriteDao.getFavoriteFlow().map {
+            it.map { favoriteEntity ->
+                FavoriteItem(
+                    name = favoriteEntity.name,
+                    url = favoriteEntity.Url,
+                    favorite = true,
+                )
+            }
+        }
+    }
+
+    override suspend fun loadPerson(url: String): PersonInfo {
+        try {
+            val response = api.loadPerson(url)
+            if (response.isSuccessful) {
+                val body = response.body()
+                body?.let { resp ->
+                    return resp.toPersonInfo()
+                }
+                throw NetworkErrorException("No Data")
+            } else {
+                throw Exception(response.errorBody().toString())
+            }
+        } catch (e: Exception) {
+            throw NetworkErrorException("Server error")
+        }
+
+    }
+
+    override suspend fun loadFilm(url: String): FilmInfo {
+        try {
+            val response = api.loadFilm(url)
+            if (response.isSuccessful) {
+                val body = response.body()
+                body?.let { resp ->
+                    return resp.toFilmInfo()
+                }
+                throw NetworkErrorException("No Data")
+            } else {
+                throw Exception(response.errorBody().toString())
+            }
+        } catch (e: Exception) {
+            throw NetworkErrorException("Server error")
+        }
     }
 }

@@ -8,4 +8,5 @@ data class PersonInfo(
     val birth_year: String,
     val gender: String,
     val url: String,
+    val films:List<String>
 )

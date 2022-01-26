@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@id/search_flow"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/title_search" />
+
+    <item
+        android:id="@id/favorite_flow"
+        android:icon="@drawable/ic_baseline_favorite_24"
+        android:title="@string/title_favorite" />
+</menu>

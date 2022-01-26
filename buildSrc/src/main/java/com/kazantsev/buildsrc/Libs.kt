@@ -24,7 +24,7 @@ object Libs {
     }
 
     object Navigation {
-        const val nav_version = "2.3.5"
+        const val nav_version = "2.4.0-rc01"
         const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:$nav_version"
         const val navigationUi = "androidx.navigation:navigation-ui-ktx:$nav_version"
     }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="no_data" tools:ignore="ExtraTranslation">Нет данных</string>
+    <string name="name">Имя</string>
+    <string name="Родился">birth_year</string>
+    <string name="Пол">gender</string>
+    <string name="favorit">Избранное</string>
+    <string name="Фильмы">video</string>
+    <string name="video">Фильмы</string>
+    <string name="birth_year">Родился</string>
+</resources>

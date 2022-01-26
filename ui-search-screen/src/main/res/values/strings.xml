@@ -4,4 +4,5 @@
     <string name="Start_typing_to_search">Начни печатать для поиска</string>
     <string name="favorit">Избранное</string>
     <string name="no_data">Пока пусто</string>
+    <string name="retry">Повторить</string>
 </resources>

@@ -8,6 +8,6 @@ class GetPersonsFavoriteUseCase @Inject constructor(
     private val repository: Repository,
 ) {
      operator fun invoke(): Flow<List<String>> {
-       return repository.getPersonsFavoriteUseCase()
+       return repository.getPersonsFavorite()
     }
 }

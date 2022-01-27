@@ -8,6 +8,7 @@ import com.kazantsev.data.repository.PersonPagingSource
 import com.kazantsev.data.repository.RepositoryImpl
 import com.kazantsev.data.util.AppCoroutineDispatchers
 import com.kazantsev.domain.repository.Repository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,13 +17,9 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object RepositoryModule {
+interface RepositoryModule {
+
     @Singleton
-    @Provides
-    fun provideRepository(
-        api: ApiDataSource,
-        personPagingSource: PersonPagingSource.Factory,
-        db: AppDatabase,
-        dispatcher: AppCoroutineDispatchers,
-    ): Repository = RepositoryImpl(api,personPagingSource,db,dispatcher)
+    @Binds
+    fun bindsRepository(repository: RepositoryImpl): Repository
 }

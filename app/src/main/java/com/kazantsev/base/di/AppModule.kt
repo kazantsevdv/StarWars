@@ -14,11 +14,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
-@Module(
-//    includes = [
-//        //NetworkModule::class,
-//    ]
-)
+@Module
 object AppModule {
     @Singleton
     @Provides
@@ -34,9 +30,4 @@ object AppModule {
     fun provideCacheDir(
         @ApplicationContext context: Context,
     ): File = context.cacheDir
-
-//    @Provides
-//    @Named("api")
-//    fun provideApiKey(): String = BuildConfig.API_KEY
-
 }

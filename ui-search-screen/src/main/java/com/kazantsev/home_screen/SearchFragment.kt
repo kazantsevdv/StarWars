@@ -6,17 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import com.kazantsev.home_screen.databinding.SearchFragmentBinding
 import com.kazantsev.navigation.NavigationFlow
-import com.kazantsev.navigation.ToFlowNavigatable
+import com.kazantsev.navigation.NavigateToFlow
+import com.kazantsev.ui_common.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
@@ -24,33 +23,21 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : Fragment() {
-    private var _viewBinding: SearchFragmentBinding? = null
-    private val binding get() = checkNotNull(_viewBinding)
+class SearchFragment : BaseFragment<SearchFragmentBinding>() {
+
     private val viewModel: SearchViewModel by viewModels()
     private val adapter by lazy(LazyThreadSafetyMode.NONE) {
         PersonAdapter(onListItemClickListener, onItemFavoriteClickListener)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _viewBinding = SearchFragmentBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.person
-                    .collectLatest {
-                        adapter.submitData(it)
-                    }
+            viewModel.person.flowWithLifecycle(lifecycle).collectLatest {
+                adapter.submitData(it)
             }
         }
+
         binding.list.adapter = adapter
             .withLoadStateHeaderAndFooter(
                 header = LoaderStateAdapter { adapter.retry() },
@@ -58,7 +45,7 @@ class SearchFragment : Fragment() {
             )
         loadStateRefresh()
         binding.searchInput.doAfterTextChanged { text ->
-            viewModel.onNewQuery(text.toString() ?: "")
+            viewModel.onNewQuery(text.toString())
         }
         viewModel.query
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
@@ -78,7 +65,7 @@ class SearchFragment : Fragment() {
     private val onListItemClickListener: OnListItemClickListener =
         object : OnListItemClickListener {
             override fun onItemClick(personUrl: String, name: String) {
-                (requireActivity() as ToFlowNavigatable).navigateToFlow(NavigationFlow.DetailFlow(
+                (requireActivity() as NavigateToFlow).navigateToFlow(NavigationFlow.DetailFlow(
                     personUrl))
             }
         }
@@ -92,8 +79,9 @@ class SearchFragment : Fragment() {
 
     private fun loadStateRefresh() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                adapter.loadStateFlow.collectLatest { loadStates ->
+            adapter.loadStateFlow
+                .flowWithLifecycle(lifecycle)
+                .collectLatest { loadStates ->
                     val refresh = loadStates.refresh
                     binding.searchProgress.isVisible = loadStates.refresh is LoadState.Loading
                     if (refresh is LoadState.Error) {
@@ -108,12 +96,11 @@ class SearchFragment : Fragment() {
                     binding.list.isVisible = !(
                             loadStates.source.refresh is LoadState.NotLoading && loadStates.append.endOfPaginationReached && adapter.itemCount < 1)
                 }
-            }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _viewBinding = null
-    }
+    override fun initBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+    ) = SearchFragmentBinding.inflate(inflater, container, false)
 }

@@ -1,5 +1,5 @@
 package com.kazantsev.navigation
 
-interface ToFlowNavigatable {
+interface NavigateToFlow {
     fun navigateToFlow(flow: NavigationFlow)
 }

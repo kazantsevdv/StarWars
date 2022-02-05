@@ -36,11 +36,7 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getPersonsFavorite(): Flow<List<String>> {
-        return db.favoriteDao.getFavoriteFlow().map { it.map { it.Url } }
-    }
-
-    override fun getPersonFavoriteByUrl(url: String): Flow<Boolean> {
+      override fun getPersonFavoriteByUrl(url: String): Flow<Boolean> {
         return db.favoriteDao.getFavoriteByUrlFlow(url).map { it != null }
     }
 

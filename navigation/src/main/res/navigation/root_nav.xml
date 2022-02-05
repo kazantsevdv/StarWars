@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_nav"
+    app:startDestination="@id/tab_flow">
+
+    <include app:graph="@navigation/tab_flow" />
+    <include app:graph="@navigation/detail_flow" />
+    <action
+        android:id="@+id/action_detail_flow"
+        app:destination="@id/detail_flow"
+        app:launchSingleTop="true">
+        <argument
+            android:name="url"
+            app:argType="string" />
+    </action>
+</navigation>

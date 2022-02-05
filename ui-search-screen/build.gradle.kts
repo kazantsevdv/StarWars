@@ -23,6 +23,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":navigation"))
+    implementation(project(":ui-common"))
     implementation(Libs.Hilt.hilt_android)
     kapt(Libs.Hilt.hilt_compiler)
     implementation(Libs.Core.coreKtx)

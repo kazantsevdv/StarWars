@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="base_flow" type="id"/>
+    <item name="tab_flow" type="id"/>
     <item name="search_flow" type="id" />
     <item name="detail_flow" type="id" />
     <item name="favorite_flow" type="id" />

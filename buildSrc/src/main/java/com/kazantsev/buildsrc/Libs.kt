@@ -24,13 +24,13 @@ object Libs {
     }
 
     object Navigation {
-        const val nav_version = "2.4.0-rc01"
+        const val nav_version = "2.4.0"
         const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:$nav_version"
         const val navigationUi = "androidx.navigation:navigation-ui-ktx:$nav_version"
     }
 
     object Coroutines {
-        private const val coroutinesVersion = "1.5.1"
+        private const val coroutinesVersion = "1.6.0"
 
         const val kotlinCoroutinesCore =
             "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"

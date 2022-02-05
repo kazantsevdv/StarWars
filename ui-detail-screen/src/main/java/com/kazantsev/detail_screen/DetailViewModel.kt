@@ -3,14 +3,12 @@ package com.kazantsev.detail_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kazantsev.domain.entity.FilmInfo
 import com.kazantsev.domain.entity.PersonInfo
 import com.kazantsev.domain.use_case.ChangePersonFavoriteUseCase
 import com.kazantsev.domain.use_case.GetPersonFavoriteUseCase
 import com.kazantsev.domain.use_case.GetPersonInfoUseCase
 import com.kazantsev.domain.use_case.GetPersonVideoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,7 +21,9 @@ class DetailViewModel @Inject constructor(
     private val getPersonVideoUseCase: GetPersonVideoUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val detailUrl = savedStateHandle.get<String>("url") ?: ""
+    private val args = DetailFragmentArgs.fromSavedStateHandle(savedStateHandle)
+    private val detailUrl = args.url
+
     private val _state = MutableStateFlow(DetailsState())
     val state: StateFlow<DetailsState> = _state.asStateFlow()
 
@@ -36,15 +36,7 @@ class DetailViewModel @Inject constructor(
                 val personInfo = getPersonInfoUseCase(detailUrl)
                 handleDetail(personInfo)
                 reduceState { copy(isLoadingInfo = false) }
-                val videoList = personInfo.films.map { url ->
-                    async {
-                        try {
-                            getPersonVideoUseCase(url)
-                        } catch (e: Exception) {
-                            FilmInfo("Ошибка загрузки")
-                        }
-                    }
-                }.map { deferred -> deferred.await() }
+                val videoList = getPersonVideoUseCase(personInfo.films)
                 reduceState { copy(isLoadingFilms = false, films = videoList) }
             } catch (e: Exception) {
                 _events.emit(DetailsEvent.ShowErrorEvent(e.localizedMessage ?: ""))
@@ -52,7 +44,7 @@ class DetailViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            getPersonFavoriteUseCase.invoke(detailUrl)
+            getPersonFavoriteUseCase(detailUrl)
                 .collect { reduceState { copy(favorite = it) } }
         }
     }
@@ -63,7 +55,6 @@ class DetailViewModel @Inject constructor(
                 changePersonFavoriteUseCase(detailUrl, state.value.name)
         }
     }
-
 
     @Synchronized
     private fun reduceState(reducer: DetailsState.() -> DetailsState) {

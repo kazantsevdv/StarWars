@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/Пол"
+        android:text="@string/gender"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/birth_year" />
@@ -144,7 +144,7 @@
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="name,tv_name,birth_year,tv_birth_year,gender,tv_gender,favorite,tv_no_data2" />
+        app:constraint_referenced_ids="name,tv_name,birth_year,tv_birth_year,gender,tv_gender,favorite" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

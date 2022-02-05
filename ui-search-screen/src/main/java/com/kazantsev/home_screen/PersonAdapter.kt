@@ -15,7 +15,6 @@ class PersonAdapter(
     PagingDataAdapter<PersonInfoUi, PersonAdapter.PersonViewHolder>(PersonDiffItemCallback) {
     private lateinit var bindingItem: ItemPersonBinding
 
-
     override fun onBindViewHolder(holder: PersonViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
@@ -43,25 +42,22 @@ class PersonAdapter(
         fun bind(data: PersonInfoUi?) {
             data?.let {
                 with(binding) {
-                    root.setOnClickListener { onListItemClickListener.onItemClick(data.url,data.name) }
-                    title.text = it.name
-                    favorite.setOnClickListener { onItemFavoriteClickListener.onItemClick(data.url,data.name) }
-                    if (data.favorite) {
-                        favorite.setColorFilter(Color.MAGENTA)
-                    } else {
-                        favorite.setColorFilter(Color.GRAY)
+                    root.setOnClickListener {
+                        onListItemClickListener.onItemClick(data.url,
+                            data.name)
                     }
+                    title.text = it.name
+                    favorite.setOnClickListener {
+                        onItemFavoriteClickListener.onItemClick(data.url,
+                            data.name)
+                    }
+                    favorite.setColorFilter(if (it.favorite) Color.MAGENTA else Color.GRAY)
                 }
             }
         }
 
-        fun bindFavoriteState(isFavorite: Boolean) {
-            if (isFavorite) {
-                binding.favorite.setColorFilter(Color.MAGENTA)
-            } else {
-                binding.favorite.setColorFilter(Color.GRAY)
-            }
-        }
+        fun bindFavoriteState(isFavorite: Boolean) =
+            binding.favorite.setColorFilter(if (isFavorite) Color.MAGENTA else Color.GRAY)
     }
 }
 
@@ -80,5 +76,5 @@ private object PersonDiffItemCallback : DiffUtil.ItemCallback<PersonInfoUi>() {
 }
 
 interface OnListItemClickListener {
-    fun onItemClick(personUrl: String,name:String)
+    fun onItemClick(personUrl: String, name: String)
 }

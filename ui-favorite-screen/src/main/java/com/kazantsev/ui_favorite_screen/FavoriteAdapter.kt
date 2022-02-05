@@ -47,11 +47,7 @@ class FavoriteAdapter(
                     root.setOnClickListener { onListItemClickListener.onItemClick(data.url,data.name) }
                     title.text = it.name
                     favorite.setOnClickListener { onItemFavoriteClickListener.onItemClick(data.url,data.name)}
-                    if (data.favorite) {
-                        favorite.setColorFilter(Color.MAGENTA)
-                    } else {
-                        favorite.setColorFilter(Color.GRAY)
-                    }
+                    favorite.setColorFilter(if (it.favorite) Color.MAGENTA else Color.GRAY)
                 }
             }
         }

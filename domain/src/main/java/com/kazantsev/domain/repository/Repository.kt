@@ -8,10 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     fun searchPerson(search: String): PagingSource<String, PersonInfo>
-    suspend fun addPersonToFavorite(url: String,name:String)
-    fun getPersonsFavorite():Flow<List<String>>
+    suspend fun addPersonToFavorite(url: String, name: String)
     fun getFavorite(): Flow<List<FavoriteItem>>
-    fun getPersonFavoriteByUrl(url :String):Flow<Boolean>
-    suspend fun loadPerson(url: String):  PersonInfo
+    fun getPersonFavoriteByUrl(url: String): Flow<Boolean>
+    suspend fun loadPerson(url: String): PersonInfo
     suspend fun loadFilm(url: String): FilmInfo
 }

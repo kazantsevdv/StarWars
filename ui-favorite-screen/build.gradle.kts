@@ -24,7 +24,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":navigation"))
-
+    implementation(project(":ui-common"))
     implementation(Libs.Hilt.hilt_android)
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     kapt(Libs.Hilt.hilt_compiler)

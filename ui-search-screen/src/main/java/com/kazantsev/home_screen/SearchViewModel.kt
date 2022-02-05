@@ -1,12 +1,12 @@
 package com.kazantsev.home_screen
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
-import com.kazantsev.domain.entity.PersonInfo
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.kazantsev.domain.use_case.ChangePersonFavoriteUseCase
-import com.kazantsev.domain.use_case.GetPersonsFavoriteUseCase
+import com.kazantsev.domain.use_case.GetFavoriteUseCase
 import com.kazantsev.domain.use_case.SearchPersonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -17,30 +17,18 @@ private const val TEXT_ENTERED_DEBOUNCE_MILLIS = 500L
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val searchPersonUseCase: SearchPersonUseCase,
     private val changePersonFavoriteUseCase: ChangePersonFavoriteUseCase,
-    private val getPersonFavoriteUseCase: GetPersonsFavoriteUseCase,
+    private val getPersonFavoriteUseCase: GetFavoriteUseCase,
 ) : ViewModel() {
-
-    private var newPagingSource: PagingSource<*, *>? = null
-
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
-    private val _dataList = MutableStateFlow<PagingData<PersonInfoUi>>(PagingData.empty())
-    val dataList = _dataList.asStateFlow()
-
-
     val person: StateFlow<PagingData<PersonInfoUi>> = query
         .debounce(TEXT_ENTERED_DEBOUNCE_MILLIS)
-        .map(::newPager)
-        .flatMapLatest { pager ->
-            pager.flow
-
-        }
+        .flatMapLatest { searchPersonUseCase(it) }
         .cachedIn(viewModelScope)
-        .combine(getPersonFavoriteUseCase.invoke()) { personInfo, fav ->
+        .combine(getPersonFavoriteUseCase()) { personInfo, fav ->
             personInfo.map {
                 PersonInfoUi(
                     name = it.name,
@@ -49,10 +37,9 @@ class SearchViewModel @Inject constructor(
                     birth_year = it.birth_year,
                     gender = it.gender,
                     url = it.url,
-                    favorite = fav.contains(it.url)
+                    favorite = fav.firstOrNull { favoriteItem -> favoriteItem.url == it.url } != null
                 )
             }
-
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
@@ -60,16 +47,9 @@ class SearchViewModel @Inject constructor(
         _query.value = query
     }
 
-    private fun newPager(name: String): Pager<String, PersonInfo> {
-        return Pager(PagingConfig(5, enablePlaceholders = false)) {
-            newPagingSource?.invalidate()
-            searchPersonUseCase(name).also { newPagingSource = it }
-        }
-    }
-
-    fun favorite(url: String,name:String) {
+    fun favorite(url: String, name: String) {
         viewModelScope.launch {
-            changePersonFavoriteUseCase(url,name)
+            changePersonFavoriteUseCase(url, name)
         }
     }
 }

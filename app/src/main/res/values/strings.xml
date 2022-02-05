@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">StarWars</string>
-    <string name="title_search">Поиск</string>
-    <string name="title_favorite">Избранное</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package com.kazantsev.ui_common
+package com.kazantsev.ui_common.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

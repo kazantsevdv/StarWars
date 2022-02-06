@@ -11,7 +11,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.kazantsev.detail_screen.databinding.DetailFragmentBinding
-import com.kazantsev.ui_common.BaseFragment
+import com.kazantsev.ui_common.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

@@ -8,9 +8,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.kazantsev.navigation.NavigationFlow
-import com.kazantsev.navigation.NavigateToFlow
-import com.kazantsev.ui_common.BaseFragment
+import com.kazantsev.navigation.RootNavDirections
+import com.kazantsev.ui_common.base.BaseFragment
+import com.kazantsev.ui_common.util.findTopNavController
 import com.kazantsev.ui_favorite_screen.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -39,8 +39,11 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     private val onListItemClickListener: OnListItemClickListener =
         object : OnListItemClickListener {
             override fun onItemClick(personUrl: String, name: String) {
-                (requireActivity() as NavigateToFlow).navigateToFlow(NavigationFlow.DetailFlow(
-                    personUrl))
+                findTopNavController().navigate(
+                    RootNavDirections.actionDetailFlow(
+                        personUrl
+                    )
+                )
             }
         }
 

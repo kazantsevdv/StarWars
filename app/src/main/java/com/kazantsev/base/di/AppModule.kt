@@ -1,7 +1,6 @@
 package com.kazantsev.base.di
 
 import android.content.Context
-import com.kazantsev.data.di.NetworkModule
 import com.kazantsev.data.util.AppCoroutineDispatchers
 import dagger.Module
 import dagger.Provides

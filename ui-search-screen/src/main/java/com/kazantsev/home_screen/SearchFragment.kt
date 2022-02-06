@@ -13,9 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import com.kazantsev.home_screen.databinding.SearchFragmentBinding
-import com.kazantsev.navigation.NavigationFlow
-import com.kazantsev.navigation.NavigateToFlow
-import com.kazantsev.ui_common.BaseFragment
+import com.kazantsev.navigation.RootNavDirections
+import com.kazantsev.ui_common.base.BaseFragment
+import com.kazantsev.ui_common.util.findTopNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
@@ -65,8 +65,11 @@ class SearchFragment : BaseFragment<SearchFragmentBinding>() {
     private val onListItemClickListener: OnListItemClickListener =
         object : OnListItemClickListener {
             override fun onItemClick(personUrl: String, name: String) {
-                (requireActivity() as NavigateToFlow).navigateToFlow(NavigationFlow.DetailFlow(
-                    personUrl))
+                findTopNavController().navigate(
+                    RootNavDirections.actionDetailFlow(
+                        personUrl
+                    )
+                )
             }
         }
 

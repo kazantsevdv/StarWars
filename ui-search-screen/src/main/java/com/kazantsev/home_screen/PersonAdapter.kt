@@ -63,11 +63,11 @@ class PersonAdapter(
 
 private object PersonDiffItemCallback : DiffUtil.ItemCallback<PersonInfoUi>() {
     override fun areItemsTheSame(oldItem: PersonInfoUi, newItem: PersonInfoUi): Boolean {
-        return oldItem == newItem
+        return oldItem.url == newItem.url
     }
 
     override fun areContentsTheSame(oldItem: PersonInfoUi, newItem: PersonInfoUi): Boolean {
-        return oldItem.url == newItem.url
+        return oldItem == newItem
     }
 
     override fun getChangePayload(oldItem: PersonInfoUi, newItem: PersonInfoUi): Any? {

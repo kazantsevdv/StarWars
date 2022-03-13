@@ -64,11 +64,12 @@ class FavoriteAdapter(
 
 private object FavoriteDiffItemCallback : DiffUtil.ItemCallback<FavoriteItemUi>() {
     override fun areItemsTheSame(oldItem: FavoriteItemUi, newItem: FavoriteItemUi): Boolean {
-        return oldItem == newItem
+        return oldItem.name == newItem.name
+
     }
 
     override fun areContentsTheSame(oldItem: FavoriteItemUi, newItem: FavoriteItemUi): Boolean {
-        return oldItem.name == newItem.name
+        return oldItem == newItem
     }
 
     override fun getChangePayload(oldItem: FavoriteItemUi, newItem: FavoriteItemUi): Any? {
